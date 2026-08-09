@@ -79,11 +79,12 @@ export function FeedbackForm() {
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
             <span className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
-              Name <span className="font-normal normal-case text-gray-400 dark:text-gray-500">(optional)</span>
+              Name
             </span>
             <input
               type="text"
               value={name}
+              required
               maxLength={120}
               onChange={(e) => setName(e.target.value)}
               disabled={status === "sending"}
