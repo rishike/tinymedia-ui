@@ -9,10 +9,12 @@ import { Dropzone } from "./Dropzone";
 import { QueueList } from "./QueueList";
 import { ActionBar, Field, NativeSelect, Notices, NumberInput, Segmented, SliderRow, TotalsRow } from "./Bits";
 import { Lock, Unlock } from "lucide-react";
+import { uploadResultToS3 } from "@/lib/uploadToS3";
 
 const MAX_BYTES = 80 * 1024 * 1024;
 const IMG_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const IMG_EXT = /\.(jpe?g|png|webp)$/i;
+
 
 export function ImageTool() {
   const q = useMediaQueue({
@@ -47,6 +49,7 @@ export function ImageTool() {
           progress: 1,
           output: { blob: out.blob, name: out.name, width: out.width, height: out.height },
         });
+        void uploadResultToS3(out.blob, out.name);
       } catch (e) {
         q.patch(it.id, { status: "error", error: e instanceof Error ? e.message : "Couldn't process this image." });
       }

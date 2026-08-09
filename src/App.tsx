@@ -11,9 +11,9 @@ import { ConvertImageTool } from "@/components/ConvertImageTool";
 import { MergeImagesTool } from "@/components/MergeImagesTool";
 import { FeedbackForm } from "@/components/FeedbackForm";
 import { useTheme } from "@/hooks/useTheme";
-
+import { PrivacyPage } from "@/components/PrivacyPage";
 type ToolRoute = "compress-video" | "compress-image" | "compress-audio" | "video-to-mp3" | "convert-image" | "merge-images";
-type Route = "" | ToolRoute | "feedback";
+type Route = "" | ToolRoute | "feedback" | "privacy";
 
 type ToolColor = "blue" | "emerald" | "amber" | "violet" | "pink";
 
@@ -101,6 +101,7 @@ const TOOLS: {
 function readRoute(): Route {
   const h = window.location.hash.replace(/^#\/?/, "");
   if (h === "feedback") return "feedback";
+  if (h === "privacy") return "privacy";
   return (TOOLS.some((t) => t.route === h) ? h : "") as Route;
 }
 
@@ -173,7 +174,16 @@ export default function App() {
       </div>
 
       <div className="mx-auto max-w-6xl px-6 pb-24 pt-8 sm:px-8 sm:pt-12">
-        {route === "feedback" ? (
+        {route === "privacy" ? (
+  <>
+    <nav className="mt-6">
+      <button onClick={() => go("")} className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-accent">
+        <ArrowLeft className="h-3.5 w-3.5" /> All tools
+      </button>
+    </nav>
+    <PrivacyPage />
+  </>
+) : route === "feedback" ? (
           <>
             <nav className="mt-2">
               <button
@@ -328,6 +338,11 @@ export default function App() {
                     <MessageSquare className="h-3.5 w-3.5" /> Feedback
                   </button>
                 </li>
+                {/* <li>
+                  <button onClick={() => go("privacy")} className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-accent">
+                    <Sparkles className="h-3.5 w-3.5" /> Privacy
+                  </button>
+                </li>       */}
               </ul>
             </div>
           </div>

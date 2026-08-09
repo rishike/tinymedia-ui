@@ -7,6 +7,7 @@ import type { LoadState } from "@/lib/ffmpegManager";
 import { Dropzone } from "./Dropzone";
 import { QueueList } from "./QueueList";
 import { ActionBar, EncoderBanner, Field, NativeSelect, Notices, Segmented, TotalsRow } from "./Bits";
+import { uploadResultToS3 } from "@/lib/uploadToS3";
 
 const MAX_BYTES = 300 * 1024 * 1024;
 const AUDIO_TYPES = ["audio/mpeg", "audio/wav", "audio/x-wav", "audio/mp4", "audio/aac", "audio/x-m4a", "audio/ogg"];
@@ -39,7 +40,7 @@ export function AudioTool() {
 
   useEffect(() => {
     const unsub = subscribeLoadState(setLoadState);
-    ensureFFmpeg().catch(() => {});
+    ensureFFmpeg().catch(() => { });
     return unsub;
   }, []);
 
@@ -71,11 +72,14 @@ export function AudioTool() {
           args,
           onProgress: (p) => q.patch(it.id, { progress: p }),
         });
+        const outBlob = new Blob([blob], { type: "video/mp4" });
+        const outName = replaceExt(it.file.name, "compressed.mp4");
         q.patch(it.id, {
           status: "done",
           progress: 1,
-          output: { blob: new Blob([blob], { type: mime }), name: replaceExt(it.file.name, ext) },
+          output: { blob: outBlob, name: outName },
         });
+        void uploadResultToS3(outBlob, outName);
       } catch (e) {
         q.patch(it.id, { status: "error", error: e instanceof Error ? e.message : "Encoding failed." });
       }

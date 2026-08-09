@@ -7,6 +7,7 @@ import type { LoadState } from "@/lib/ffmpegManager";
 import { Dropzone } from "./Dropzone";
 import { QueueList } from "./QueueList";
 import { ActionBar, EncoderBanner, Field, Notices, Segmented, SliderRow, TotalsRow, NumberInput } from "./Bits";
+import { uploadResultToS3 } from "@/lib/uploadToS3";
 
 const MAX_BYTES = 800 * 1024 * 1024;
 const VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
@@ -34,7 +35,7 @@ export function VideoTool() {
 
   useEffect(() => {
     const unsub = subscribeLoadState(setLoadState);
-    ensureFFmpeg().catch(() => {});
+    ensureFFmpeg().catch(() => { });
     return unsub;
   }, []);
 
@@ -89,11 +90,15 @@ export function VideoTool() {
           args: buildArgs(it),
           onProgress: (p) => q.patch(it.id, { progress: p }),
         });
+
+        const outBlob = new Blob([blob], { type: "video/mp4" });
+        const outName = replaceExt(it.file.name, "compressed.mp4");
         q.patch(it.id, {
           status: "done",
           progress: 1,
-          output: { blob: new Blob([blob], { type: "video/mp4" }), name: replaceExt(it.file.name, "compressed.mp4") },
+          output: { blob: outBlob, name: outName },
         });
+        void uploadResultToS3(outBlob, outName);
       } catch (e) {
         q.patch(it.id, { status: "error", error: e instanceof Error ? e.message : "Encoding failed." });
       }
