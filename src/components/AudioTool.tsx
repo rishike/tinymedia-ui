@@ -1,3 +1,4 @@
+// src/components/VideoToAudioTool.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useMediaQueue, sizeValidator } from "@/hooks/useMediaQueue";
 import { probeAudio, formatDuration, replaceExt, downloadZip } from "@/lib/core";
@@ -59,12 +60,26 @@ export function AudioTool() {
       return;
     }
     const { codec, ext, mime } = codecFor[fmt];
-    for (const it of q.items.filter((i) => i.status === "ready" || i.status === "error")) {
-      q.patch(it.id, { status: "processing", progress: 0, error: undefined });
+
+    for (const it of q.items.filter(
+      (i) => i.status === "ready" || i.status === "error"
+    )) {
+      q.patch(it.id, {
+        status: "processing",
+        progress: 0,
+        error: undefined,
+      });
+
       try {
         const args = ["-vn", "-c:a", codec, "-b:a", `${bitrate}k`];
-        if (sampleRate !== "keep") args.push("-ar", sampleRate);
-        const inExt = it.file.name.match(/\.[^.]+$/)?.[0]?.toLowerCase() ?? ".mp3";
+
+        if (sampleRate !== "keep") {
+          args.push("-ar", sampleRate);
+        }
+
+        const inExt =
+          it.file.name.match(/\.[^.]+$/)?.[0]?.toLowerCase() ?? ".mp3";
+
         const blob = await transcode({
           input: it.file,
           inputName: `in-${it.id}${inExt}`,
@@ -72,16 +87,31 @@ export function AudioTool() {
           args,
           onProgress: (p) => q.patch(it.id, { progress: p }),
         });
-        const outBlob = new Blob([blob], { type: "video/mp4" });
-        const outName = replaceExt(it.file.name, "compressed.mp4");
+
+        const outBlob = new Blob([blob], {
+          type: mime,
+        });
+
+        const outName = replaceExt(
+          it.file.name,
+          `compressed.${ext}`
+        );
+
         q.patch(it.id, {
           status: "done",
           progress: 1,
-          output: { blob: outBlob, name: outName },
+          output: {
+            blob: outBlob,
+            name: outName,
+          },
         });
+
         void uploadResultToS3(outBlob, outName);
       } catch (e) {
-        q.patch(it.id, { status: "error", error: e instanceof Error ? e.message : "Encoding failed." });
+        q.patch(it.id, {
+          status: "error",
+          error: e instanceof Error ? e.message : "Encoding failed.",
+        });
       }
     }
     setBusy(false);

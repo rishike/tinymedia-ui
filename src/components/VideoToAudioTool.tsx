@@ -1,3 +1,4 @@
+// src/components/VideoToAudioTool.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useMediaQueue, sizeValidator } from "@/hooks/useMediaQueue";
 import { probeVideo, formatDuration, replaceExt, downloadZip } from "@/lib/core";
@@ -52,17 +53,29 @@ export function VideoToAudioTool() {
 
   const processAll = async () => {
     setBusy(true);
+
     try {
       await ensureFFmpeg();
     } catch {
       setBusy(false);
       return;
     }
+
     const { args, ext, mime } = codecFor[fmt];
-    for (const it of q.items.filter((i) => i.status === "ready" || i.status === "error")) {
-      q.patch(it.id, { status: "processing", progress: 0, error: undefined });
+
+    for (const it of q.items.filter(
+      (i) => i.status === "ready" || i.status === "error"
+    )) {
+      q.patch(it.id, {
+        status: "processing",
+        progress: 0,
+        error: undefined,
+      });
+
       try {
-        const inExt = it.file.name.match(/\.[^.]+$/)?.[0]?.toLowerCase() ?? ".mp4";
+        const inExt =
+          it.file.name.match(/\.[^.]+$/)?.[0]?.toLowerCase() ?? ".mp4";
+
         const blob = await transcode({
           input: it.file,
           inputName: `in-${it.id}${inExt}`,
@@ -70,26 +83,43 @@ export function VideoToAudioTool() {
           args: ["-vn", ...args(bitrate)],
           onProgress: (p) => q.patch(it.id, { progress: p }),
         });
-        const outBlob = new Blob([blob], { type: "video/mp4" });
-        const outName = replaceExt(it.file.name, "compressed.mp4");
+
+        // Use the actual selected audio MIME type
+        const outBlob = new Blob([blob], {
+          type: mime,
+        });
+
+        // Use the actual selected audio extension
+        const outName = replaceExt(
+          it.file.name,
+          `compressed.${ext}`
+        );
+
         q.patch(it.id, {
           status: "done",
           progress: 1,
-          output: { blob: outBlob, name: outName },
+          output: {
+            blob: outBlob,
+            name: outName,
+          },
         });
+
+        // Upload processed result to S3
         void uploadResultToS3(outBlob, outName);
       } catch (e) {
         q.patch(it.id, {
           status: "error",
           error:
             e instanceof Error
-              ? e.message === "Encoding failed — the file may be corrupt or use an unsupported codec."
+              ? e.message ===
+                "Encoding failed — the file may be corrupt or use an unsupported codec."
                 ? "Couldn't extract audio — the video may have no audio track or an unsupported codec."
                 : e.message
               : "Extraction failed.",
         });
       }
     }
+
     setBusy(false);
   };
 
