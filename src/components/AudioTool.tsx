@@ -1,4 +1,4 @@
-// src/components/VideoToAudioTool.tsx
+// src/components/AudioTool.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useMediaQueue, sizeValidator } from "@/hooks/useMediaQueue";
 import { probeAudio, formatDuration, replaceExt, downloadZip } from "@/lib/core";
@@ -9,6 +9,7 @@ import { Dropzone } from "./Dropzone";
 import { QueueList } from "./QueueList";
 import { ActionBar, EncoderBanner, Field, NativeSelect, Notices, Segmented, TotalsRow } from "./Bits";
 import { uploadResultToS3 } from "@/lib/uploadToS3";
+import { trackConversion } from "@/lib/core";
 
 const MAX_BYTES = 300 * 1024 * 1024;
 const AUDIO_TYPES = ["audio/mpeg", "audio/wav", "audio/x-wav", "audio/mp4", "audio/aac", "audio/x-m4a", "audio/ogg"];
@@ -105,7 +106,7 @@ export function AudioTool() {
             name: outName,
           },
         });
-
+        trackConversion("compress-audio", { format: fmt });
         void uploadResultToS3(outBlob, outName);
       } catch (e) {
         q.patch(it.id, {

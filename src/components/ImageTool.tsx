@@ -9,6 +9,7 @@ import { Dropzone } from "./Dropzone";
 import { QueueList } from "./QueueList";
 import { ActionBar, Field, NativeSelect, Notices, NumberInput, Segmented, SliderRow, TotalsRow } from "./Bits";
 import { Lock, Unlock } from "lucide-react";
+import { trackConversion } from "@/lib/core";
 import { uploadResultToS3 } from "@/lib/uploadToS3";
 
 const MAX_BYTES = 80 * 1024 * 1024;
@@ -49,6 +50,7 @@ export function ImageTool() {
           progress: 1,
           output: { blob: out.blob, name: out.name, width: out.width, height: out.height },
         });
+        trackConversion("compress-image", { format: s.format });
         void uploadResultToS3(out.blob, out.name);
       } catch (e) {
         q.patch(it.id, { status: "error", error: e instanceof Error ? e.message : "Couldn't process this image." });

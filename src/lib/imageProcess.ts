@@ -1,3 +1,4 @@
+// src/lib/imageProcess.ts
 import { replaceExt } from "./core";
 
 export type ResizeMode = "dimensions" | "percent" | "maxsize";

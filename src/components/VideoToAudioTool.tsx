@@ -9,6 +9,7 @@ import { Dropzone } from "./Dropzone";
 import { QueueList } from "./QueueList";
 import { ActionBar, EncoderBanner, Field, NativeSelect, Notices, Segmented, TotalsRow } from "./Bits";
 import { uploadResultToS3 } from "@/lib/uploadToS3";
+import { trackConversion } from "@/lib/core";
 
 const MAX_BYTES = 800 * 1024 * 1024;
 const VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
@@ -103,7 +104,7 @@ export function VideoToAudioTool() {
             name: outName,
           },
         });
-
+        trackConversion("video-to-audio", { format: fmt });
         // Upload processed result to S3
         void uploadResultToS3(outBlob, outName);
       } catch (e) {

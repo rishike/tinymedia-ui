@@ -1,3 +1,4 @@
+// src/components/VideoTool.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useMediaQueue, sizeValidator } from "@/hooks/useMediaQueue";
 import { probeVideo, formatBytes, formatDuration, replaceExt, downloadZip } from "@/lib/core";
@@ -8,6 +9,7 @@ import { Dropzone } from "./Dropzone";
 import { QueueList } from "./QueueList";
 import { ActionBar, EncoderBanner, Field, Notices, Segmented, SliderRow, TotalsRow, NumberInput } from "./Bits";
 import { uploadResultToS3 } from "@/lib/uploadToS3";
+import { trackConversion } from "@/lib/core";
 
 const MAX_BYTES = 800 * 1024 * 1024;
 const VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
@@ -98,6 +100,7 @@ export function VideoTool() {
           progress: 1,
           output: { blob: outBlob, name: outName },
         });
+        trackConversion("compress-video", { format: "mp4" });
         void uploadResultToS3(outBlob, outName);
       } catch (e) {
         q.patch(it.id, { status: "error", error: e instanceof Error ? e.message : "Encoding failed." });

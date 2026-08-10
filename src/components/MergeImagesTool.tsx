@@ -8,6 +8,7 @@ import { QueueList } from "./QueueList";
 import { Field, Notices, NumberInput, Segmented, SliderRow } from "./Bits";
 import { Download, Loader2 } from "lucide-react";
 import { uploadResultToS3 } from "@/lib/uploadToS3";
+import { trackConversion } from "@/lib/core";
 
 const MAX_BYTES = 80 * 1024 * 1024;
 const IMG_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -53,6 +54,7 @@ export function MergeImagesTool() {
     try {
       const out = await mergeImages(q.items.map((i) => i.file), s);
       setResult({ ...out, url: URL.createObjectURL(out.blob) });
+      trackConversion("merge-images", { format: s.format });
       void uploadResultToS3(out.blob, `merged.${s.format === "jpeg" ? "jpg" : s.format}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Couldn't merge these images.");

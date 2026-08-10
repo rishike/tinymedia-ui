@@ -1,6 +1,7 @@
+// src/components/ConvertImageTool.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useMediaQueue, sizeValidator } from "@/hooks/useMediaQueue";
-import { probeImage, downloadZip } from "@/lib/core";
+import { probeImage, downloadZip, trackConversion } from "@/lib/core";
 import type { MediaItem } from "@/lib/core";
 import { defaultImageSettings, processImage, estimateImageSize, supportsAvif } from "@/lib/imageProcess";
 import type { ImageSettings } from "@/lib/imageProcess";
@@ -52,6 +53,7 @@ export function ConvertImageTool() {
           progress: 1,
           output: { blob: out.blob, name: out.name, width: out.width, height: out.height },
         });
+        trackConversion("convert-image", { format });
         void uploadResultToS3(out.blob, out.name);
       } catch (e) {
         q.patch(it.id, { status: "error", error: e instanceof Error ? e.message : "Couldn't convert this image." });

@@ -1,3 +1,4 @@
+// src/lib/ffmpegManager.ts
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile } from "@ffmpeg/util";
 import { FFMPEG_WORKER_CODE } from "./ffmpegWorkerCode";

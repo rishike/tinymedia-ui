@@ -1,3 +1,4 @@
+// src/lib/core.ts
 export interface MediaMeta {
   width?: number;
   height?: number;
@@ -133,4 +134,11 @@ export async function downloadZip(
     onProgress?.(m.percent)
   );
   downloadBlob(blob, zipName);
+}
+
+export function trackConversion(toolName: string, extra?: Record<string, string | number>) {
+  const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+  if (typeof gtag === "function") {
+    gtag("event", "file_converted", { tool_name: toolName, ...extra });
+  }
 }

@@ -1,3 +1,4 @@
+// src/lib/mergeImages.ts
 export interface MergeSettings {
   layout: "horizontal" | "vertical" | "grid";
   cols: number;
