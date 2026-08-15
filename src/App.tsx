@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
-  ArrowLeft, Film, FileAudio, Image as ImageIcon, LayoutGrid, Moon, Music,
-  Repeat, Sun, MessageSquare, Sparkles, Zap, Gift,
+  ArrowLeft, Film, FileAudio, Image as ImageIcon, LayoutGrid, Music,
+  Repeat, MessageSquare, Sparkles, Zap, Gift,
 } from "lucide-react";
 import { VideoTool } from "@/components/VideoTool";
 import { AudioTool } from "@/components/AudioTool";
@@ -11,7 +11,6 @@ import { ConvertImageTool } from "@/components/ConvertImageTool";
 import { MergeImagesTool } from "@/components/MergeImagesTool";
 import { FeedbackForm } from "@/components/FeedbackForm";
 import { useTheme } from "@/hooks/useTheme";
-import { PrivacyPage } from "@/components/PrivacyPage";
 import { SiteHeader } from "@/components/SiteHeader";
 
 type ToolRoute = "compress-video" | "compress-image" | "compress-audio" | "video-to-mp3" | "convert-image" | "merge-images";
