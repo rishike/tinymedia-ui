@@ -218,9 +218,6 @@ export function VideoToAudioTool() {
               }
             }}
           >
-            {!encoderReady && loadState.phase !== "error" && (
-              <span className="text-xs text-slate-400 dark:text-slate-500">Waiting for the encoder to finish loading…</span>
-            )}
           </ActionBar>
         </>
       )}

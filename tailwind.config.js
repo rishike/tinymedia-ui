@@ -8,8 +8,8 @@ export default {
         // Single source of truth for the brand accent.
         // Change these two values to re-theme the whole app.
         accent: {
-          DEFAULT: "#0D9488", // teal-600
-          hover: "#0F766E", // teal-700 (darker, for hover states)
+          DEFAULT: "#2563EB", // blue-600
+          hover: "#1D4ED8",  // blue-700 (darker, for hover states)
         },
       },
     },

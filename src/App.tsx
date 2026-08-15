@@ -12,6 +12,8 @@ import { MergeImagesTool } from "@/components/MergeImagesTool";
 import { FeedbackForm } from "@/components/FeedbackForm";
 import { useTheme } from "@/hooks/useTheme";
 import { PrivacyPage } from "@/components/PrivacyPage";
+import { SiteHeader } from "@/components/SiteHeader";
+
 type ToolRoute = "compress-video" | "compress-image" | "compress-audio" | "video-to-mp3" | "convert-image" | "merge-images";
 type Route = "" | ToolRoute | "feedback" | "privacy";
 
@@ -142,37 +144,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 antialiased">
-      {/* header */}
-      <div className="sticky top-0 z-20 border-b border-slate-200/70 dark:border-slate-800/70 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-x-6 gap-y-2 px-6 py-4 sm:px-8">
-          <button onClick={() => go("")} className="rounded-md text-xl font-semibold tracking-tight focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40">
-            <span className="font-black tracking-tight text-slate-900 dark:text-white">
-              Tiny
-              <span className="text-accent">
-                Media
-              </span>
-            </span>
-          </button>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={toggle}
-              aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-              title={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-              className="rounded-lg p-2 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
-            >
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
-            <button
-              onClick={() => go("feedback")}
-              className="flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 transition-colors hover:border-accent hover:text-accent"
-            >
-              <MessageSquare className="h-3.5 w-3.5" />
-              Feedback
-            </button>
-          </div>
-        </div>
-      </div>
 
+<SiteHeader route={route} go={go} theme={theme} toggle={toggle} />
       <div className="mx-auto max-w-6xl px-6 pb-24 pt-8 sm:px-8 sm:pt-12">
         {route === "privacy" ? (
   <>
@@ -181,7 +154,6 @@ export default function App() {
         <ArrowLeft className="h-3.5 w-3.5" /> All tools
       </button>
     </nav>
-    <PrivacyPage />
   </>
 ) : route === "feedback" ? (
           <>
@@ -240,47 +212,32 @@ export default function App() {
           </>
         ) : (
           <>
-            <header className="mt-10 text-center sm:mt-16">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 shadow-sm">
-                <Sparkles className="h-3.5 w-3.5 text-accent" />
+            <header className="mt-0 text-center sm:mt-0">
+              <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 shadow-sm">
+                <Sparkles className="h-1 w-1 text-accent" />
                 Runs entirely in your browser
               </span>
 
-              <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-6xl">
+              <h1 className="mt-1 text-xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-6xl">
                 Compress, Convert
                 <br className="hidden sm:block" /> &amp; Optimize Media
               </h1>
 
-              <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-400">
+              <p className="mx-auto mt-1 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-400">
                 Fast browser-based media tools powered by FFmpeg. Compress videos, resize
                 images, convert formats, and optionally save processed files securely.
               </p>
 
-              <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-                <button
-                  onClick={() => go("compress-video")}
-                  className="rounded-xl bg-accent px-6 py-3 text-[15px] font-semibold text-white shadow-md transition-all duration-150 hover:bg-accent-hover hover:shadow-lg hover:scale-[1.03] active:scale-[0.98]"
-                >
-                  Compress Video
-                </button>
+             
 
-                {/* <a
-                  href="#tools"
-                  className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 py-3 text-[15px] font-semibold text-slate-700 dark:text-slate-200 shadow-sm transition-all duration-150 hover:border-accent hover:text-accent hover:scale-[1.03] active:scale-[0.98]"
-                >
-                  Browse Tools
-                </a> */}
-              </div>
-
-              <div className="mt-10 flex flex-wrap justify-center gap-2.5">
+              <div className="mt-1 flex flex-wrap justify-center gap-2">
                 <Badge icon={<Zap className="h-3.5 w-3.5" />} label="Browser Powered" color="blue" />
                  <Badge icon={<Sparkles className="h-3.5 w-3.5" />} label="Fast Processing" color="emerald" />
-                {/* <Badge icon={<Cloud className="h-3.5 w-3.5" />} label="Optional Cloud Save" color="violet" />  */}
                 <Badge icon={<Gift className="h-3.5 w-3.5" />} label="Free" color="amber" />
               </div>
             </header>
 
-            <main id="tools" className="mt-16 grid scroll-mt-24 gap-5 sm:mt-20 md:grid-cols-2 lg:grid-cols-3">
+            <main id="tools" className="mt-1 grid scroll-mt-2 gap-3 sm:mt-20 md:grid-cols-2 lg:grid-cols-3">
               {TOOLS.map(({ route: r, name, desc, icon: Icon, uses, color }) => (
                 <button
                   key={r}
@@ -313,7 +270,7 @@ export default function App() {
               <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">TinyMedia</p>
               <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                 Browser-powered media tools. Video and audio use FFmpeg compiled to
-                WebAssembly (loaded once, ~31 MB, shared between tools); image tools use
+                WebAssembly; image tools use
                 the Canvas API. Closing this tab cancels work in progress.
               </p>
             </div>
@@ -328,21 +285,11 @@ export default function App() {
             <div>
               <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">Links</p>
               <ul className="mt-2 space-y-1.5 text-xs">
-                {/* <li>
-                  <a href="#" className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-accent">
-                    <GithubMark className="h-3.5 w-3.5" /> GitHub
-                  </a>
-                </li> */}
                 <li>
                   <button onClick={() => go("feedback")} className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-accent">
                     <MessageSquare className="h-3.5 w-3.5" /> Feedback
                   </button>
                 </li>
-                {/* <li>
-                  <button onClick={() => go("privacy")} className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-accent">
-                    <Sparkles className="h-3.5 w-3.5" /> Privacy
-                  </button>
-                </li>       */}
               </ul>
             </div>
           </div>

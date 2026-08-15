@@ -126,7 +126,6 @@ export function Notices({ notices }: { notices: string[] }) {
 }
 
 export function EncoderBanner({ state }: { state: LoadState }) {
-  if (state.phase === "ready" || state.phase === "idle") return null;
   if (state.phase === "error") {
     return (
       <div className="mt-4 rounded-xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40 px-4 py-3 text-sm text-red-700 dark:text-red-300">
@@ -134,20 +133,8 @@ export function EncoderBanner({ state }: { state: LoadState }) {
       </div>
     );
   }
-  return (
-    <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3">
-      <p className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
-        <Loader2 className="h-3.5 w-3.5 animate-spin text-accent" />
-        Loading the encoder — a one-time ~31 MB download, shared by the Video and Audio tools.
-      </p>
-      <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-        <div
-          className="h-full rounded-full bg-accent transition-[width] duration-300"
-          style={{ width: `${state.pct}%` }}
-        />
-      </div>
-    </div>
-  );
+
+  return null;
 }
 
 export function ActionBar(p: {
