@@ -234,6 +234,7 @@ export default function App() {
                       {r === "convert-image" && <ConvertImageTool />}
                       {r === "merge-images" && <MergeImagesTool />}
                       {r === "merge-audio" && <MergeAudioTool />}
+                      {r === "merge-video" && <MergeVideoTool />}
                     </>
                   )}
                 </div>
