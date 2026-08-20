@@ -13,8 +13,10 @@ import { FeedbackForm } from "@/components/FeedbackForm";
 import { useTheme } from "@/hooks/useTheme";
 import { SiteHeader } from "@/components/SiteHeader";
 import { AudioToVideoTool } from "@/components/AudioToVideoTool";
+import { MergeAudioTool } from "@/components/MergeAudioTool";
+import {MergeVideoTool} from "@/components/MergeVideoTool";
 
-type ToolRoute = "compress-video" | "compress-image" | "compress-audio" | "video-to-mp3" | "audio-to-video" | "convert-image" | "merge-images";
+type ToolRoute = "compress-video" | "compress-image" | "compress-audio" | "video-to-mp3" | "audio-to-video" | "merge-audio" | "convert-image" | "merge-images" | "merge-video";
 type Route = "" | ToolRoute | "feedback" | "privacy";
 
 type ToolColor = "blue" | "emerald" | "amber" | "violet" | "pink";
@@ -81,6 +83,15 @@ const TOOLS: {
       color: "blue", 
     },
     {
+      route: "merge-audio",
+      name: "Merge Audio",
+      title: "Merge Audio Files — join MP3, WAV, M4A into one",
+      desc: "Join multiple audio files end to end into a single track, in any order.",
+      icon: Music,
+      uses: "Podcasts · mixtapes · lecture parts · voice notes",
+      color: "amber",
+    },
+    {
       route: "convert-image",
       name: "Image Format Converter",
       title: "Convert Images Online — JPG, PNG, WebP, AVIF & back",
@@ -97,6 +108,15 @@ const TOOLS: {
       icon: LayoutGrid,
       uses: "Before/after shots · screenshots · photo strips",
       color: "pink",
+    },
+    {
+      route: "merge-video",
+      name: "Merge Video",
+      title: "Merge Video Files — join MP4, WebM, MOV into one",
+      desc: "Join multiple video files end to end into a single video, in any order.",
+      icon: Film,
+      uses: "Movies · lectures · vlogs · clips",
+      color: "blue",
     },
   ];
 
@@ -213,6 +233,7 @@ export default function App() {
                       {r === "audio-to-video" && <AudioToVideoTool />}
                       {r === "convert-image" && <ConvertImageTool />}
                       {r === "merge-images" && <MergeImagesTool />}
+                      {r === "merge-audio" && <MergeAudioTool />}
                     </>
                   )}
                 </div>

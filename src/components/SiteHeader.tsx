@@ -10,7 +10,7 @@ import {
 
 export type ToolRoute =
   | "compress-video" | "compress-image" | "compress-audio"
-  | "video-to-mp3" | "audio-to-video" | "convert-image" | "merge-images";
+  | "video-to-mp3" | "audio-to-video" |  "convert-image" | "merge-images" | "merge-audio" | "merge-video";
 
 export type Route = "" | ToolRoute | "feedback" | "privacy";
 
@@ -40,6 +40,8 @@ const NAV_GROUPS: { heading: string; items: NavItem[] }[] = [
       { route: "audio-to-video", label: "Audio to video", hint: "Image + song → MP4", icon: Film },
       { route: "convert-image", label: "Image format", hint: "JPG ⇄ PNG ⇄ WebP", icon: Repeat },
       { route: "merge-images", label: "Merge images", hint: "Row, column, grid", icon: LayoutGrid },
+      { route: "merge-audio", label: "Merge audio", hint: "Join MP3, WAV, M4A", icon: Music },
+      { route: "merge-video", label: "Merge video", hint: "Join MP4, WebM, MOV", icon: Film },
     ],
   },
 ];
