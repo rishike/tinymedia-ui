@@ -147,17 +147,42 @@ export function AudioToVideoTool() {
       }
 
       const per = dur ? dur / images.length : 4;
-      const named = images.map((im, i) => ({ name: `img${i}.${extOf(im.file.name, ".png").slice(1)}`, file: im.file }));
-      let listText = "";
-      for (const n of named) listText += `file '${n.name}'\nduration ${per.toFixed(3)}\n`;
-      listText += `file '${named[named.length - 1].name}'\n`;
-      const listBlob = new Blob([listText], { type: "text/plain" });
+      const { w: vw, h: vh } = RES_DIMS[res];
+
+      // Build a filter_complex that loops each image for `per` seconds, scales +
+      // pads each to the same canvas, then concatenates them in order. This is
+      // more reliable than the concat demuxer (which drops per-image durations
+      // when combined with fps filtering) and stays cheap because fps=2 keeps
+      // the total frame count tiny.
+      const inputs: { name: string; file: File | Blob }[] = [];
+      const perImageArgs: string[] = [];
+      const filterParts: string[] = [];
+      let concatIns = "";
+      images.forEach((im, i) => {
+        const nm = `img${i}.${extOf(im.file.name, ".png").slice(1)}`;
+        inputs.push({ name: nm, file: im.file });
+        // each image is its own -loop 1 -t <per> -i input
+        perImageArgs.push("-loop", "1", "-t", per.toFixed(3), "-i", nm);
+        filterParts.push(
+          `[${i}:v]scale=${vw}:${vh}:force_original_aspect_ratio=decrease,pad=${vw}:${vh}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps=2[v${i}]`
+        );
+        concatIns += `[v${i}]`;
+      });
+      const audioIndex = images.length; // audio is the input after all images
+      inputs.push({ name: `aud${audExt}`, file: audio.file });
+
+      const filterComplex =
+        filterParts.join(";") +
+        `;${concatIns}concat=n=${images.length}:v=1:a=0,format=yuv420p[v]`;
 
       const blob = await runFFmpeg({
-        inputs: [...named, { name: "list.txt", file: listBlob }, { name: `aud${audExt}`, file: audio.file }],
+        inputs,
         args: [
-          "-f", "concat", "-safe", "0", "-i", "list.txt", "-i", `aud${audExt}`,
-          "-vf", `scale=${w}:${h}:force_original_aspect_ratio=decrease,pad=${w}:${h}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps=2,format=yuv420p`,
+          ...perImageArgs,
+          "-i", `aud${audExt}`,
+          "-filter_complex", filterComplex,
+          "-map", "[v]",
+          "-map", `${audioIndex}:a`,
           "-c:v", "libx264", "-tune", "stillimage",
           "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart",
         ],
