@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   ArrowLeft, Film, FileAudio, Image as ImageIcon, LayoutGrid, Music,
-  Repeat, MessageSquare, Sparkles, Zap, Gift,
+  Repeat, MessageSquare, Sparkles, Zap, Gift
 } from "lucide-react";
 import { VideoTool } from "@/components/VideoTool";
 import { AudioTool } from "@/components/AudioTool";
@@ -12,8 +12,9 @@ import { MergeImagesTool } from "@/components/MergeImagesTool";
 import { FeedbackForm } from "@/components/FeedbackForm";
 import { useTheme } from "@/hooks/useTheme";
 import { SiteHeader } from "@/components/SiteHeader";
+import { AudioToVideoTool } from "@/components/AudioToVideoTool";
 
-type ToolRoute = "compress-video" | "compress-image" | "compress-audio" | "video-to-mp3" | "convert-image" | "merge-images";
+type ToolRoute = "compress-video" | "compress-image" | "compress-audio" | "video-to-mp3" | "audio-to-video" | "convert-image" | "merge-images";
 type Route = "" | ToolRoute | "feedback" | "privacy";
 
 type ToolColor = "blue" | "emerald" | "amber" | "violet" | "pink";
@@ -70,6 +71,14 @@ const TOOLS: {
       icon: FileAudio,
       uses: "Lectures · interviews · music from your own recordings",
       color: "amber",
+    },
+    { 
+      route: "audio-to-video", 
+      name: "Audio to Video", 
+      title: "Audio to Video — turn a song and image into an MP4", 
+      desc: "Combine an audio track with a still image to create a video you can upload to YouTube.", 
+      icon: Film, uses: "Music · bhajans · podcasts · lyric uploads", 
+      color: "blue", 
     },
     {
       route: "convert-image",
@@ -201,6 +210,7 @@ export default function App() {
                       {r === "compress-image" && <ImageTool />}
                       {r === "compress-audio" && <AudioTool />}
                       {r === "video-to-mp3" && <VideoToAudioTool />}
+                      {r === "audio-to-video" && <AudioToVideoTool />}
                       {r === "convert-image" && <ConvertImageTool />}
                       {r === "merge-images" && <MergeImagesTool />}
                     </>

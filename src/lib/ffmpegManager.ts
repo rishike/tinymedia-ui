@@ -145,3 +145,44 @@ export async function transcode(job: TranscodeJob): Promise<Blob> {
     }
   });
 }
+
+
+export interface FFmpegRunJob {
+  // Files to write into the ffmpeg virtual FS before running.
+  inputs: { name: string; file: File | Blob }[];
+  // The FULL argument list (you control -i order, filters, -loop, etc.),
+  // ending with the output filename. This is what lets multi-input tools
+  // (image+audio -> video, concat, etc.) work, which the single-input
+  // `transcode` can't express.
+  args: string[];
+  outputName: string;
+  outputType?: string;
+  onProgress?: (p: number) => void;
+}
+
+export async function runFFmpeg(job: FFmpegRunJob): Promise<Blob> {
+  const ff = await ensureFFmpeg();
+  return runExclusive(async () => {
+    const onProg = ({ progress }: { progress: number }) => {
+      if (isFinite(progress)) job.onProgress?.(Math.max(0, Math.min(1, progress)));
+    };
+    ff.on("progress", onProg);
+    try {
+      for (const inp of job.inputs) {
+        await ff.writeFile(inp.name, await fetchFile(inp.file));
+      }
+      const code = await ff.exec([...job.args, job.outputName]);
+      if (code !== 0) throw new Error("Encoding failed — an input may be corrupt or use an unsupported codec.");
+      const data = (await ff.readFile(job.outputName)) as Uint8Array;
+      if (!data?.length) throw new Error("Encoder produced an empty file.");
+      return new Blob([data.slice()], job.outputType ? { type: job.outputType } : undefined);
+    } finally {
+      ff.off("progress", onProg);
+      for (const inp of job.inputs) {
+        try { await ff.deleteFile(inp.name); } catch { /* noop */ }
+      }
+      try { await ff.deleteFile(job.outputName); } catch { /* noop */ }
+    }
+  });
+}
+
