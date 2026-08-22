@@ -14,9 +14,11 @@ import { useTheme } from "@/hooks/useTheme";
 import { SiteHeader } from "@/components/SiteHeader";
 import { AudioToVideoTool } from "@/components/AudioToVideoTool";
 import { MergeAudioTool } from "@/components/MergeAudioTool";
-import {MergeVideoTool} from "@/components/MergeVideoTool";
+import { MergeVideoTool } from "@/components/MergeVideoTool";
+import { VideoToGifTool } from "@/components/VideoToGifTool";
+import { ImagesToGifTool } from "@/components/ImagesToGifTool";
 
-type ToolRoute = "compress-video" | "compress-image" | "compress-audio" | "video-to-mp3" | "audio-to-video" | "merge-audio" | "convert-image" | "merge-images" | "merge-video";
+type ToolRoute = "compress-video" | "compress-image" | "compress-audio" | "video-to-mp3" | "audio-to-video" | "merge-audio" | "convert-image" | "merge-images" | "merge-video" | "video-to-gif" | "images-to-gif";
 type Route = "" | ToolRoute | "feedback" | "privacy";
 
 type ToolColor = "blue" | "emerald" | "amber" | "violet" | "pink";
@@ -74,13 +76,13 @@ const TOOLS: {
       uses: "Lectures · interviews · music from your own recordings",
       color: "amber",
     },
-    { 
-      route: "audio-to-video", 
-      name: "Audio to Video", 
-      title: "Audio to Video — turn a song and image into an MP4", 
-      desc: "Combine an audio track with a still image to create a video you can upload to YouTube.", 
-      icon: Film, uses: "Music · bhajans · podcasts · lyric uploads", 
-      color: "blue", 
+    {
+      route: "audio-to-video",
+      name: "Audio to Video",
+      title: "Audio to Video — turn a song and image into an MP4",
+      desc: "Combine an audio track with a still image to create a video you can upload to YouTube.",
+      icon: Film, uses: "Music · bhajans · podcasts · lyric uploads",
+      color: "blue",
     },
     {
       route: "merge-audio",
@@ -117,6 +119,18 @@ const TOOLS: {
       icon: Film,
       uses: "Movies · lectures · vlogs · clips",
       color: "blue",
+    },
+    {
+      route: "video-to-gif", name: "Video to GIF",
+      title: "Video to GIF Maker — turn clips into animated GIFs",
+      desc: "Turn a clip, or part of one, into an animated GIF with control over length, frame rate, and size.",
+      icon: Film, uses: "Reactions · demos · memes · previews", color: "violet"
+    },
+    {
+      route: "images-to-gif", name: "Images to GIF",
+      title: "Images to GIF — make an animated GIF from photos",
+      desc: "Turn a set of images into a looping animated GIF, like a flipbook or slideshow.",
+      icon: ImageIcon, uses: "Flipbooks · before/after loops · step-by-step demos", color: "violet"
     },
   ];
 
@@ -173,17 +187,17 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 antialiased">
 
-<SiteHeader route={route} go={go} theme={theme} toggle={toggle} />
+      <SiteHeader route={route} go={go} theme={theme} toggle={toggle} />
       <div className="mx-auto max-w-6xl px-6 pb-24 pt-8 sm:px-8 sm:pt-12">
         {route === "privacy" ? (
-  <>
-    <nav className="mt-6">
-      <button onClick={() => go("")} className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-accent">
-        <ArrowLeft className="h-3.5 w-3.5" /> All tools
-      </button>
-    </nav>
-  </>
-) : route === "feedback" ? (
+          <>
+            <nav className="mt-6">
+              <button onClick={() => go("")} className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-accent">
+                <ArrowLeft className="h-3.5 w-3.5" /> All tools
+              </button>
+            </nav>
+          </>
+        ) : route === "feedback" ? (
           <>
             <nav className="mt-2">
               <button
@@ -235,6 +249,8 @@ export default function App() {
                       {r === "merge-images" && <MergeImagesTool />}
                       {r === "merge-audio" && <MergeAudioTool />}
                       {r === "merge-video" && <MergeVideoTool />}
+                      {r === "video-to-gif" && <VideoToGifTool />}
+                      {r === "images-to-gif" && <ImagesToGifTool />}
                     </>
                   )}
                 </div>
@@ -259,11 +275,11 @@ export default function App() {
                 images, convert formats, and optionally save processed files securely.
               </p>
 
-             
+
 
               <div className="mt-1 flex flex-wrap justify-center gap-2">
                 <Badge icon={<Zap className="h-3.5 w-3.5" />} label="Browser Powered" color="blue" />
-                 <Badge icon={<Sparkles className="h-3.5 w-3.5" />} label="Fast Processing" color="emerald" />
+                <Badge icon={<Sparkles className="h-3.5 w-3.5" />} label="Fast Processing" color="emerald" />
                 <Badge icon={<Gift className="h-3.5 w-3.5" />} label="Free" color="amber" />
               </div>
             </header>
